@@ -1,0 +1,51 @@
+sudo apt install -y protobuf-compiler
+protoc --version
+    libprotoc 3.12.4
+go mod init github.com/khybort/grpc-go-gateway
+mkdir -p proto/{orders,product}
+mkdir -p protogen/golang
+mkdir -p proto/google/api
+curl -L https://raw.githubusercontent.com/googleapis/googleapis/master/google/type/date.proto -o proto/google/api/date.proto
+go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+make protoc   --This is protoc_v1
+    if an error occur like that
+        cd proto && protoc --go_out=../protogen/golang --go_opt=paths=source_relative \
+        ./**/*.proto
+        protoc-gen-go: program not found or is not executable
+        Please specify a program using absolute path or make sure the program is available in your PATH system variable
+        --go_out: protoc-gen-go: Plugin failed with status code 1.
+        make: *** [Makefile:4: protoc] Error 1
+    Run 
+        nano ~/.bash_profile
+    Add 
+        export GO_PATH=~/go
+        export PATH=$PATH:/$GO_PATH/bin
+    Run 
+        source ~/.bash_profile
+
+go get google.golang.org/protobuf
+go get google.golang.org/genproto
+go run main.go
+rm main.go
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 --for compile the service definitions
+run protoc_v2
+go get google.golang.org/grpc
+mkdir -p cmd/server internal
+touch cmd/server/main.go internal/{db,orderservice}.go
+go run cmd/server/main.go  --starts the server
+curl 127.0.0.1:50051 --> curl: (1) Received HTTP/0.9 when not allowed --its not easy to test like REST API
+photo[diagram-arch]
+--for grpc gateway ecosystem
+go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
+curl -L https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/annotations.proto -o proto/google/api/annotations.proto
+curl -L https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/http.proto -o proto/google/api/http.proto
+run protoc_v3 
+mkdir cmd/client
+touch cmd/client/main.go
+
+go run cmd/server/main.go
+go run cmd/client/main.go
+curl -d "@data/data.json" -X POST -i http://localhost:8085/v0/orders
